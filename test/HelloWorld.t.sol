@@ -21,9 +21,21 @@ contract HelloWorldTest is Test {
         assertEq(hello.version(), 0);
         hello.updateGreeting("Hello World");
         assertEq(hello.version(), 1);
+        string memory value = hello.greet();
+        emit log(value);
         assertEq(
             hello.greet(),
             "Hello World"
         );
     }
+
+    function test3(string memory _greeting) public {
+    assertEq(hello.version(), 0);
+    hello.updateGreeting(_greeting);
+    assertEq(hello.version(), 1);
+    assertEq(
+        hello.greet(),
+        _greeting
+    );
+}
 }
