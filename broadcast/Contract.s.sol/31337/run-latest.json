@@ -1,7 +1,7 @@
 {
   "transactions": [
     {
-      "hash": null,
+      "hash": "0x66d06f9121c90309de9e00c25ec0f648d7ff710781e58ffed4f7d297108b16f0",
       "transactionType": "CREATE",
       "contractName": "NFT",
       "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
@@ -23,12 +23,28 @@
       "additionalContracts": []
     }
   ],
-  "receipts": [],
+  "receipts": [
+    {
+      "transactionHash": "0x66d06f9121c90309de9e00c25ec0f648d7ff710781e58ffed4f7d297108b16f0",
+      "transactionIndex": "0x0",
+      "blockHash": "0x3635fd86a2ea56b0b1a2e5f7d573b142a0728adcd60f2cf21df3a1538189f98b",
+      "blockNumber": "0x1",
+      "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "to": null,
+      "cumulativeGasUsed": "0x12c42e",
+      "gasUsed": "0x12c42e",
+      "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "logs": [],
+      "status": "0x1",
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "effectiveGasPrice": "0xe7943194"
+    }
+  ],
   "libraries": [],
   "pending": [],
-  "path": "/workspaces/nft-marketplace/broadcast/Contract.s.sol/31337/dry-run/run-latest.json",
+  "path": "/workspaces/nft-marketplace/broadcast/Contract.s.sol/31337/run-latest.json",
   "returns": {},
-  "timestamp": 1670226651,
+  "timestamp": 1670226740,
   "chain": 31337,
   "multi": false,
   "commit": "ff0992d"
