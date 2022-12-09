@@ -71,6 +71,8 @@ contract NFTAskTest is Test {
         nft.buyerAcceptAsk{value: 1000}(tokenId);
         assertEq(nft.ownerOf(tokenId), bob);
         assertEq(alice.balance, 1000);
+        (, address seller, , ,) = nft.askList(tokenId); 
+        assertEq(seller, address(0));
     }
 
     function testNotEnoughETH() public {
@@ -92,7 +94,7 @@ contract NFTAskTest is Test {
         nft.buyerAcceptAsk{value: 1000}(tokenId);
     }
 
-    function testDurationPast() public {
+    function testDurationPass() public {
         uint256 tokenId = 1;
         aliceAskSuccess(tokenId);
         vm.deal(bob, uint256(1000));

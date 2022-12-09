@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 
-abstract contract SaleContract is ERC721 {
+abstract contract BidAndAsk is ERC721 {
     struct AskInfo {
         uint256 tokenId;
         address seller;
@@ -52,5 +52,5 @@ abstract contract SaleContract is ERC721 {
 
     function getAskList() public view { }
 
-    
+
 }
