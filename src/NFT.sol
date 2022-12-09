@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.13;
+pragma solidity ^0.8.0;
 
 // import "solmate/tokens/ERC721.sol";
+import "./SaleContract.sol";
 import "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 
-contract NFT is ERC721 {
+contract NFT is SaleContract {
     uint256 public currentTokenId;
 
-    constructor(
-        string memory _name,
-        string memory _symbol
+    constructor(string memory _name, string memory _symbol
     ) ERC721(_name, _symbol) {}
 
     function mintTo(address recipient) public payable returns (uint256) {
