@@ -1,6 +1,5 @@
 pragma solidity ^0.8.0;
 
-// import "solmate/tokens/ERC721.sol";
 import "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 
@@ -17,7 +16,7 @@ abstract contract BidAndAsk is ERC721 {
 
     // can later extend a function to allow approved operator to ask
     // for now, only owner may ask to sell
-    function sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration) public {
+    function sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration) external {
         require(msg.sender == ownerOf(tokenId), "not owner"); //ownerOf() itself require tokenId exists
         askList[tokenId] = AskInfo({
             tokenId: tokenId,
@@ -28,12 +27,12 @@ abstract contract BidAndAsk is ERC721 {
         });
     }
 
-    function sellerCancelAsk(uint256 tokenId) public {
+    function sellerCancelAsk(uint256 tokenId) external {
         require(msg.sender == ownerOf(tokenId), "not owner"); 
         delete askList[tokenId]; 
     }
 
-    function buyerAcceptAsk(uint256 tokenId) public payable{
+    function buyerAcceptAsk(uint256 tokenId) external payable{
         AskInfo memory askInfo = askList[tokenId];
         // require duration has not passed => ask is valid
         require((block.timestamp - askInfo.timestamp) <= askInfo.duration, "ask has expired, rendering ask invalid"); //this implicitly requires there is an ask

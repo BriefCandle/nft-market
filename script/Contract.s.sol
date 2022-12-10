@@ -2,13 +2,13 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
-import { NFT } from 'src/NFT.sol';
+import { NFT2 } from 'src/NFT2.sol';
 
 contract ContractScript is Script {
     function setUp() public {}
 
     function run() public {
         vm.broadcast();
-        new NFT("a","b");
+        new NFT2("a","b");
     }
 }
