@@ -62,13 +62,13 @@ contract MarketAskTest is Test {
         vm.prank(alice);
         nft.safeTransferFrom(address(alice), address(bob), tokenId);
         assertEq(nft.ownerOf(tokenId), address(bob));
-        vm.expectRevert(bytes("not approved"));
+        vm.expectRevert(bytes("Market: not approved"));
         aliceAsk();
     }
 
     function testNonExistentToken() public { //non-existent token cannot be asked
         vm.prank(alice);
-        vm.expectRevert(bytes("not approved")); // not "ERC721: invalid token ID" because approval is check first
+        vm.expectRevert(bytes("Market: not approved")); // not "ERC721: invalid token ID" because approval is check first
         market.sellerAsk(uint256(2), uint64(1000), uint32(1000));
     }
 
@@ -86,7 +86,7 @@ contract MarketAskTest is Test {
         aliceSetApproval();
         aliceAsk();
         vm.prank(bob); 
-        vm.expectRevert(bytes("not owner"));
+        vm.expectRevert(bytes("Market: not owner"));
         market.sellerRescindAsk(tokenId);
     }
 
@@ -99,7 +99,7 @@ contract MarketAskTest is Test {
         testAliceAskSuccess();
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
-        vm.expectRevert(bytes("payment not enough"));
+        vm.expectRevert(bytes("Market: payment not enough"));
         market.buyerAcceptAsk{value: 100}(tokenId);
     }
 
@@ -110,7 +110,7 @@ contract MarketAskTest is Test {
         assertEq(market.checkAskBinding(tokenId), false);
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
-        vm.expectRevert(bytes('no ask or ask has expired'));
+        vm.expectRevert(bytes('Market: no ask or ask has expired'));
         market.buyerAcceptAsk{value: 1000}(tokenId);  
     }
 
@@ -122,7 +122,7 @@ contract MarketAskTest is Test {
         vm.warp(timestamp + 2000);
         assertEq(market.checkAskBinding(tokenId), false);
         vm.prank(bob);
-        vm.expectRevert(bytes('no ask or ask has expired'));
+        vm.expectRevert(bytes('Market: no ask or ask has expired'));
         market.buyerAcceptAsk{value: 1000}(tokenId);
     }
 
@@ -145,7 +145,7 @@ contract MarketAskTest is Test {
         nft.setApprovalForAll(address(market), true);
         // alice tries to accept ask
         vm.prank(alice);
-        vm.expectRevert(bytes("owner has changed"));
+        vm.expectRevert(bytes("Market: owner has changed"));
         market.buyerAcceptAsk(tokenId);
         assertEq(market.checkAskBinding(tokenId), false);
         // new owner is able to submit new ask 

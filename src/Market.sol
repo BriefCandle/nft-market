@@ -44,7 +44,7 @@ contract Market is IMarket{
     /** ------- BID MECHANISM ------- */
     // before calling this function, seller must call erc20.approve()
     function buyerBid(uint256 tokenId, uint64 bidPrice, address bidERC20, uint32 duration) external {
-        require(IERC20(bidERC20).allowance(msg.sender, address(this)) >= bidPrice, "not approved");
+        require(IERC20(bidERC20).allowance(msg.sender, address(this)) >= bidPrice, "Market: not approved");
         if (bidList[tokenId][msg.sender].buyer == address(0)) bidderList[tokenId].push(msg.sender);
         bidList[tokenId][msg.sender] = BidInfo({
             tokenId: tokenId,
@@ -72,18 +72,18 @@ contract Market is IMarket{
                 return;
             }
         }
-        revert("no bid");
+        revert("Market: no bid");
     }
 
     // before calling this function, seller must call nft.setApprovalForAll()
     function sellerAcceptBid(uint256 tokenId, address buyer) external {
-        require(msg.sender == IERC721(nft).ownerOf(tokenId), "not owner");
+        require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner");
         BidInfo memory bidInfo = bidList[tokenId][buyer];
-        require((block.timestamp - bidInfo.timestamp) <= bidInfo.duration, "not bid or bid has expired"); //this implicitly requires there is an bid
+        require((block.timestamp - bidInfo.timestamp) <= bidInfo.duration, "Market: not bid or bid has expired"); //this implicitly requires there is an bid
         _removeBidderFromArray(tokenId, buyer);
         delete bidList[tokenId][buyer];
         IERC721(nft).safeTransferFrom(msg.sender, bidInfo.buyer, tokenId, "");
-        require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, msg.sender, bidInfo.bidPrice), "ERC20 transfer fail");
+        require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, msg.sender, bidInfo.bidPrice), "Market: ERC20 transfer fail");
         emit SellerAcceptBid(tokenId, buyer, msg.sender, bidInfo.bidPrice, bidInfo.bidERC20);
     }
 
@@ -102,8 +102,8 @@ contract Market is IMarket{
     /** ------- ASK MECHANISM ------- */
     // before calling this function, seller must call nft.setApprovalForAll()
     function sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration) external {
-        require(IERC721(nft).isApprovedForAll(msg.sender, address(this)) == true, "not approved");
-        require(msg.sender == IERC721(nft).ownerOf(tokenId), "not owner"); //ownerOf() require tokenId exists
+        require(IERC721(nft).isApprovedForAll(msg.sender, address(this)) == true, "Market: not approved");
+        require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner"); //ownerOf() require tokenId exists
         askList[tokenId] = AskInfo({
             tokenId: tokenId,
             seller: msg.sender,
@@ -115,19 +115,19 @@ contract Market is IMarket{
     }
 
     function sellerRescindAsk(uint256 tokenId) external {
-        require(msg.sender == IERC721(nft).ownerOf(tokenId), "not owner"); 
+        require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner"); 
         delete askList[tokenId]; 
         emit SellerRescindAsk(tokenId, msg.sender);
     }
 
     function buyerAcceptAsk(uint256 tokenId) external payable{
         AskInfo memory askInfo = askList[tokenId];
-        require((block.timestamp - askInfo.timestamp) <= askInfo.duration, "no ask or ask has expired"); //this implicitly requires there is an ask
-        require(IERC721(nft).ownerOf(tokenId) == askInfo.seller, "owner has changed"); 
-        require(msg.value == askInfo.askPrice, "payment not enough");
+        require((block.timestamp - askInfo.timestamp) <= askInfo.duration, "Market: no ask or ask has expired"); //this implicitly requires there is an ask
+        require(IERC721(nft).ownerOf(tokenId) == askInfo.seller, "Market: owner has changed"); 
+        require(msg.value == askInfo.askPrice, "Market: payment not enough");
         delete askList[tokenId];
         (bool sent, ) = askInfo.seller.call{value: msg.value}("");
-        require(sent, "Failed to send Ether");
+        require(sent, "Market: Failed to send Ether");
         IERC721(nft).safeTransferFrom(askInfo.seller, msg.sender, tokenId, "");
         emit BuyerAcceptAsk(tokenId, askInfo.seller, msg.sender, askInfo.askPrice);
     }

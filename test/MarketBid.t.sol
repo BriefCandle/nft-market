@@ -32,7 +32,7 @@ contract MarketAskTest is Test {
         vm.prank(alice);
         nft.mintTo(alice);
     }
-    // alice is owner/seller/acceptor, bob is buyer/bidder
+    // alice is owner/seller/acceptor, bob is buyer/bidder, charlie is the second buyer/bidder
 
     /** 
      * ------------- TEST BUYER BID -------------
@@ -81,6 +81,7 @@ contract MarketAskTest is Test {
         bidders = market.getBidders(tokenId);
         assertEq(bidders.length, 0);
         assertEq(getBidderFromArray(bob, bidders), false);
+        assertEq(market.checkBidBinding(tokenId, bob), false);
         vm.stopPrank();
     }
 
@@ -92,7 +93,7 @@ contract MarketAskTest is Test {
         assertEq(getBidderFromArray(bob, bidders), true);
         // charlie tries to Rescind bid
         vm.prank(charlie);
-        vm.expectRevert(bytes("no bid"));
+        vm.expectRevert(bytes("Market: no bid"));
         market.buyerRescindBid(tokenId);
     } 
 
@@ -127,6 +128,59 @@ contract MarketAskTest is Test {
         market.sellerAcceptBid(tokenId, bob);
     }
 
-    // function 
+    function testNotOwnerAcceptBid() public {
+        testBobBidSuccess();
+        vm.prank(charlie);
+        vm.expectRevert(bytes("Market: not owner"));
+        market.sellerAcceptBid(tokenId, bob);
+    }
+
+    function testOwnerRevokeApprovalCannotAccept() public {
+        testBobBidSuccess();
+        vm.startPrank(alice);
+        nft.setApprovalForAll(address(market), false);
+        vm.expectRevert(bytes("ERC721: caller is not token owner or approved"));
+        market.sellerAcceptBid(tokenId, bob);
+        vm.stopPrank();
+    }
+
+    // buyer revokes/decreases previous approval of usage of erc20
+    // bid no longer binding
+    // seller cannot accept
+    function testBuyerRevokeApproveCannotAccept() public { 
+        testBobBidSuccess();
+        vm.prank(bob);
+        erc20.approve(address(market), 100);
+        assertEq(market.checkBidBinding(tokenId,bob), false);
+        vm.prank(alice);
+        vm.expectRevert(bytes("ERC721: caller is not token owner or approved"));
+        market.sellerAcceptBid(tokenId, bob);
+    }
+
+    // buyer rescind previous bid
+    // seller cannot accept buyer's previous bid
+    // buyer 2 bids
+    // seller can accept buyer2's bid
+    function testBuyer1RescindCannotAcceptBuyer2BidCanAccept() public { //
+        testBobBidSuccess();
+        testBidderRescindBid();
+        // charlie bids
+        uint64 bidPrice = 2000;
+        erc20.mint(charlie, uint256(2000));
+        buyerApproveERC20(charlie, address(market), bidPrice);
+        buyerBid(charlie, bidPrice);
+        assertEq(market.checkBidBinding(tokenId, charlie), true);
+        // alice accepts bid
+        vm.startPrank(alice);
+        nft.setApprovalForAll(address(market), true);
+        vm.expectRevert(bytes("Market: not bid or bid has expired"));
+        market.sellerAcceptBid(tokenId, bob);
+        market.sellerAcceptBid(tokenId, charlie);
+        assertEq(nft.ownerOf(tokenId), charlie);
+        assertEq(erc20.balanceOf(alice), 2000);
+        vm.stopPrank();
+    }
+
+
 
 }
