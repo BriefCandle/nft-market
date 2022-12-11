@@ -22,7 +22,7 @@ contract NFTMarketplaceFactory {
         assembly {
             marketplace := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        INFTMarketplace(marketplace).initialize(_nft);
+        INFTMarketplace(marketplace).initialize(_nft); // could get owner if Ownable
         getMarketplace[_nft] = marketplace;
         allMarketplaces.push(marketplace);
         emit MarketPlaceCreated(_nft, marketplace, allMarketplaces.length);

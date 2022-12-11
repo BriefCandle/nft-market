@@ -1,3 +1,6 @@
 broadcast/
 cache/
 out/
+src/BidAndAsk.sol
+src/NFT.sol
+test/NFTAsk.t.sol

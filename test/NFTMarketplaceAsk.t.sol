@@ -72,22 +72,22 @@ contract NFTMarketplaceAskTest is Test {
         marketplace.sellerAsk(uint256(2), uint64(1000), uint32(1000));
     }
 
-    function testAliceCancelAsk() public { // owner can cancel ask
+    function testAliceRescindAsk() public { // owner can Rescind ask
         uint256 tokenId = 1;
         testAliceAskSuccess();
         vm.prank(alice);
-        marketplace.sellerCancelAsk((tokenId));
+        marketplace.sellerRescindAsk((tokenId));
         (, address seller, , ,) = marketplace.askList(tokenId); 
         assertEq(seller, address(0));
     }
 
-    function testNotOwnerCancelAsk() public {
+    function testNotOwnerRescindAsk() public {
         uint256 tokenId = 1;
         aliceSetApproval();
         aliceAsk();
         vm.prank(bob); 
         vm.expectRevert(bytes("not owner"));
-        marketplace.sellerCancelAsk(tokenId);
+        marketplace.sellerRescindAsk(tokenId);
     }
 
     /** 

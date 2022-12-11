@@ -32,6 +32,7 @@ contract NFTMarketplaceAskTest is Test {
         vm.prank(alice);
         nft.mintTo(alice);
     }
+    // alice is owner/seller/acceptor, bob is buyer/bidder
 
     /** 
      * ------------- TEST BUYER BID -------------
@@ -66,15 +67,15 @@ contract NFTMarketplaceAskTest is Test {
         assertEq(getBidderFromArray(bob, bidders), true);
     }
 
-    function testBidderCancelBid() public { // bidder can cancel bid
+    function testBidderRescindBid() public { // bidder can Rescind bid
         testBobBidSuccess();
         vm.startPrank(bob);
         (,address buyer , , , , ) = marketplace.bidList(tokenId, bob); 
         assertEq(buyer, bob);
         address[] memory bidders = marketplace.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), true);
-        // cancel bid
-        marketplace.buyerCancelBid(tokenId);
+        // Rescind bid
+        marketplace.buyerRescindBid(tokenId);
         (, buyer , , , , ) = marketplace.bidList(tokenId, bob); 
         assertEq(buyer, address(0));
         bidders = marketplace.getBidders(tokenId);
@@ -83,16 +84,16 @@ contract NFTMarketplaceAskTest is Test {
         vm.stopPrank();
     }
 
-    function testNotBidderCancelBid() public { // not bidder cannot cancel bid
+    function testNotBidderRescindBid() public { // not bidder cannot Rescind bid
         testBobBidSuccess();
         (,address buyer , , , , ) = marketplace.bidList(tokenId, bob); 
         assertEq(buyer, bob);
         address[] memory bidders = marketplace.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), true);
-        // charlie tries to cancel bid
+        // charlie tries to Rescind bid
         vm.prank(charlie);
         vm.expectRevert(bytes("no bid"));
-        marketplace.buyerCancelBid(tokenId);
+        marketplace.buyerRescindBid(tokenId);
     } 
 
     function getBidderFromArray(address bidder, address[] memory bidders) private pure returns (bool) {
@@ -125,5 +126,7 @@ contract NFTMarketplaceAskTest is Test {
         erc20.mint(bob, uint256(1000));
         marketplace.sellerAcceptBid(tokenId, bob);
     }
+
+    // function 
 
 }

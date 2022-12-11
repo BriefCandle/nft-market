@@ -57,10 +57,10 @@ contract NFTMarketplace is INFTMarketplace{
         emit BuyerBid(tokenId, msg.sender, bidPrice, bidERC20, block.timestamp, duration);
     }
 
-    function buyerCancelBid(uint256 tokenId) external {
+    function buyerRescindBid(uint256 tokenId) external {
         _removeBidderFromArray(tokenId, msg.sender);
         delete bidList[tokenId][msg.sender];
-        emit BuyerCancelBid(tokenId, msg.sender);
+        emit BuyerRescindBid(tokenId, msg.sender);
     }
 
     function _removeBidderFromArray(uint256 tokenId, address buyer) private {
@@ -90,7 +90,8 @@ contract NFTMarketplace is INFTMarketplace{
     function checkBidBinding(uint256 tokenId, address buyer) public view returns (bool binding) {
         BidInfo memory bidInfo = bidList[tokenId][buyer];
         binding = (block.timestamp - bidInfo.timestamp) <= bidInfo.duration && 
-        IERC20(bidInfo.bidERC20).allowance(bidInfo.buyer, address(this)) >= bidInfo.bidPrice ? true : false;
+        IERC20(bidInfo.bidERC20).allowance(bidInfo.buyer, address(this)) >= bidInfo.bidPrice && 
+        IERC20(bidInfo.bidERC20).balanceOf(bidInfo.buyer) >= bidInfo.bidPrice ? true : false;
     }
 
     function getBidders(uint256 tokenId) public view returns(address[] memory) {
@@ -113,10 +114,10 @@ contract NFTMarketplace is INFTMarketplace{
         emit SellerAsk(tokenId, msg.sender, askPrice, block.timestamp, duration);
     }
 
-    function sellerCancelAsk(uint256 tokenId) external {
+    function sellerRescindAsk(uint256 tokenId) external {
         require(msg.sender == IERC721(nft).ownerOf(tokenId), "not owner"); 
         delete askList[tokenId]; 
-        emit SellerCancelAsk(tokenId, msg.sender);
+        emit SellerRescindAsk(tokenId, msg.sender);
     }
 
     function buyerAcceptAsk(uint256 tokenId) external payable{
