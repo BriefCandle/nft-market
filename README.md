@@ -51,13 +51,9 @@ Anyone can check whether a bid is currently binding on the buyer. This on-chain 
 | Transaction | Gas |   
 | :---: | :---: | 
 | ERC20 approve() | 24646 | 
-| :---: | :---: | 
 | ERC721 setApprovalForAll() | 24672 | 
-| :---: | :---: | 
 | buyerBid() | 157585 (first bid) | 
-| :---: | :---: | 
 | buyerRescindBid | 2741 |
-| :---: | :---: | 
 | sellerAcceptBid() | 60462 | 
 
 
@@ -81,11 +77,8 @@ Anyone can check whether an ask is currently binding on the seller. This on-chai
 | Transaction | Gas |   
 | :---: | :---: | 
 | ERC721 setApprovalForAll() | 24672 | 
-| :---: | :---: | 
 | sellerAsk() | 95820 | 
-| :---: | :---: | 
 | sellerRescindAsk() | 3368 | 
-| :---: | :---: | 
 | buyerAcceptAsk() | 60454 | 
 
 
