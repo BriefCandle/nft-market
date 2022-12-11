@@ -2,5 +2,5 @@ broadcast/
 cache/
 out/
 src/BidAndAsk.sol
-src/NFT.sol
+src/example/NFT.sol
 test/NFTAsk.t.sol

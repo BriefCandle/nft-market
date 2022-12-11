@@ -2,7 +2,7 @@ pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
-import 'src/NFT2.sol';
+import 'src/example/NFT2.sol';
 import 'src/Market.sol';
 import 'src/MarketFactory.sol';
 
