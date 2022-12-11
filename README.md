@@ -47,6 +47,21 @@ The owner of the NFT tokenId can accept any bid make to his NFT. Please be noted
 4) check whether bid is binding: ```checkBidBinding(uint256 tokenId, address buyer)```
 Anyone can check whether a bid is currently binding on the buyer. This on-chain view method provides composibiliy for later on-chain adoption.
 
+
+| Transaction | Gas |   
+| :---: | :---: | 
+| ERC20 approve() | 24646 | 
+| :---: | :---: | 
+| ERC721 setApprovalForAll() | 24672 | 
+| :---: | :---: | 
+| buyerBid() | 157585 (first bid) | 
+| :---: | :---: | 
+| buyerRescindBid | 2741 |
+| :---: | :---: | 
+| sellerAcceptBid() | 60462 | 
+
+
+
 ### Ask-and-Accept
 Payment of ETH <--> ERC721
 
@@ -62,9 +77,18 @@ Anyone can accept seller's offered ask as long as he is paying the amount of ETH
 4) check whether ask is binding ```function checkAskBinding(uint256 tokenId)```
 Anyone can check whether an ask is currently binding on the seller. This on-chain view method provides composibiliy for later on-chain adoption.
 
-| Transaction | setApprovalForAll() | sellerAsk() | sellerRescindAsk() | buyerAcceptAsk | 
-| :---: | :---: | :---: | :---: | :---: | 
-| Gas | 24672 | 95820 | 3368 | 60454 | 
+
+| Transaction | Gas |   
+| :---: | :---: | 
+| ERC721 setApprovalForAll() | 24672 | 
+| :---: | :---: | 
+| sellerAsk() | 95820 | 
+| :---: | :---: | 
+| sellerRescindAsk() | 3368 | 
+| :---: | :---: | 
+| buyerAcceptAsk() | 60454 | 
+
+
 
 ### Creator Fee
 Any NFT contract adopting the ERC721 and Ownable standards could set up creator fee and recipient address for its project owner. If the owner wants to split up fees among multiple contributors, he can deploy a fee-sharing multi-sig contract and submit this contract address as the recipient address. In the future, we could refer some of these peripheral contract templates into front-end for better ux. 
