@@ -41,7 +41,7 @@ contract MarketAskTest is Test {
         uint64 bidPrice = 1000;
         buyerApproveERC20(bob, address(market), bidPrice);
         buyerBid(bob, bidPrice);
-        (, ,uint64 price , , , ) = market.bidList(tokenId, bob); 
+        (, ,uint64 price , , , ) = market.getBid(tokenId, bob); 
         assertEq(price, bidPrice);
     }
 
@@ -52,7 +52,7 @@ contract MarketAskTest is Test {
         uint64 bidPrice = 1000;
         buyerApproveERC20(bob, address(market), bidPrice);
         buyerBid(bob, bidPrice);
-        (, ,uint64 price , , , ) = market.bidList(tokenId, bob); 
+        (, ,uint64 price , , , ) = market.getBid(tokenId, bob); 
         assertEq(price, bidPrice);
         bidders = market.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), true);
@@ -60,7 +60,7 @@ contract MarketAskTest is Test {
         bidPrice = 10000;
         buyerApproveERC20(bob, address(market), bidPrice);
         buyerBid(bob, bidPrice);
-        (, , price , , , ) = market.bidList(tokenId, bob); 
+        (, , price , , , ) = market.getBid(tokenId, bob); 
         assertEq(price, bidPrice);
         bidders = market.getBidders(tokenId);
         assertEq(bidders.length, 1);
@@ -70,13 +70,13 @@ contract MarketAskTest is Test {
     function testBidderRescindBid() public { // bidder can Rescind bid
         testBobBidSuccess();
         vm.startPrank(bob);
-        (,address buyer , , , , ) = market.bidList(tokenId, bob); 
+        (,address buyer , , , , ) = market.getBid(tokenId, bob); 
         assertEq(buyer, bob);
         address[] memory bidders = market.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), true);
         // Rescind bid
         market.buyerRescindBid(tokenId);
-        (, buyer , , , , ) = market.bidList(tokenId, bob); 
+        (, buyer , , , , ) = market.getBid(tokenId, bob); 
         assertEq(buyer, address(0));
         bidders = market.getBidders(tokenId);
         assertEq(bidders.length, 0);
@@ -87,7 +87,7 @@ contract MarketAskTest is Test {
 
     function testNotBidderRescindBid() public { // not bidder cannot Rescind bid
         testBobBidSuccess();
-        (,address buyer , , , , ) = market.bidList(tokenId, bob); 
+        (,address buyer , , , , ) = market.getBid(tokenId, bob); 
         assertEq(buyer, bob);
         address[] memory bidders = market.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), true);

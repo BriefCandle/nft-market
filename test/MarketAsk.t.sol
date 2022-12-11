@@ -41,7 +41,7 @@ contract MarketAskTest is Test {
         uint256 tokenId = 1;
         aliceSetApproval();
         aliceAsk();
-        (, address seller, , ,) = market.askList(tokenId); 
+        (, address seller, , ,) = market.getAsk(tokenId); 
         assertEq(seller, alice);
         vm.stopPrank();
     }
@@ -77,7 +77,7 @@ contract MarketAskTest is Test {
         testAliceAskSuccess();
         vm.prank(alice);
         market.sellerRescindAsk((tokenId));
-        (, address seller, , ,) = market.askList(tokenId); 
+        (, address seller, , ,) = market.getAsk(tokenId); 
         assertEq(seller, address(0));
     }
 
@@ -105,7 +105,7 @@ contract MarketAskTest is Test {
 
     function testNoAskNoAccept() public { // buyer cannot accept when there is no ask
         uint256 tokenId = 1;
-        (, address seller, , ,) = market.askList(tokenId); 
+        (, address seller, , ,) = market.getAsk(tokenId); 
         assertEq(seller, address(0));
         assertEq(market.checkAskBinding(tokenId), false);
         vm.deal(bob, uint256(1000));

@@ -2,13 +2,12 @@ pragma solidity ^0.8.13;
 
 import "./Market.sol";
 import "./interfaces/IMarket.sol";
+import "./interfaces/IMarketFactory.sol";
 
 // refer to UniswapV2Factory: https://github.com/Uniswap/v2-core/blob/master/contracts/UniswapV2Factory.sol
-contract MarketFactory {
+contract MarketFactory is IMarketFactory {
     mapping(address => address) public getMarket;
     address[] public allMarkets;
-
-    event MarketCreated(address indexed _nft, address Market, uint);
 
     constructor() {
         // could setup fee recipient

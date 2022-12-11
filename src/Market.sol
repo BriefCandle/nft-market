@@ -11,25 +11,8 @@ contract Market is IMarket{
     // address owner;
     // address feeRecipient;
 
-    struct BidInfo {
-        uint256 tokenId;
-        address buyer;
-        uint64 bidPrice;
-        address bidERC20;
-        uint256 timestamp;
-        uint32 duration;
-    }
-
-    struct AskInfo {
-        uint256 tokenId;
-        address seller;
-        uint64 askPrice;
-        uint256 timestamp;
-        uint32 duration;
-    }
-
-    mapping(uint256 => AskInfo) public askList;
-    mapping(uint256 => mapping(address => BidInfo)) public bidList;
+    mapping(uint256 => AskInfo) public getAsk;
+    mapping(uint256 => mapping(address => BidInfo)) public getBid;
     mapping(uint256 => address[]) public bidderList;
 
     constructor() {
@@ -45,8 +28,8 @@ contract Market is IMarket{
     // before calling this function, seller must call erc20.approve()
     function buyerBid(uint256 tokenId, uint64 bidPrice, address bidERC20, uint32 duration) external {
         require(IERC20(bidERC20).allowance(msg.sender, address(this)) >= bidPrice, "Market: not approved");
-        if (bidList[tokenId][msg.sender].buyer == address(0)) bidderList[tokenId].push(msg.sender);
-        bidList[tokenId][msg.sender] = BidInfo({
+        if (getBid[tokenId][msg.sender].buyer == address(0)) bidderList[tokenId].push(msg.sender);
+        getBid[tokenId][msg.sender] = BidInfo({
             tokenId: tokenId,
             buyer: msg.sender,
             bidPrice: bidPrice,
@@ -59,7 +42,7 @@ contract Market is IMarket{
 
     function buyerRescindBid(uint256 tokenId) external {
         _removeBidderFromArray(tokenId, msg.sender);
-        delete bidList[tokenId][msg.sender];
+        delete getBid[tokenId][msg.sender];
         emit BuyerRescindBid(tokenId, msg.sender);
     }
 
@@ -78,17 +61,17 @@ contract Market is IMarket{
     // before calling this function, seller must call nft.setApprovalForAll()
     function sellerAcceptBid(uint256 tokenId, address buyer) external {
         require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner");
-        BidInfo memory bidInfo = bidList[tokenId][buyer];
+        BidInfo memory bidInfo = getBid[tokenId][buyer];
         require((block.timestamp - bidInfo.timestamp) <= bidInfo.duration, "Market: not bid or bid has expired"); //this implicitly requires there is an bid
         _removeBidderFromArray(tokenId, buyer);
-        delete bidList[tokenId][buyer];
+        delete getBid[tokenId][buyer];
         IERC721(nft).safeTransferFrom(msg.sender, bidInfo.buyer, tokenId, "");
         require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, msg.sender, bidInfo.bidPrice), "Market: ERC20 transfer fail");
         emit SellerAcceptBid(tokenId, buyer, msg.sender, bidInfo.bidPrice, bidInfo.bidERC20);
     }
 
     function checkBidBinding(uint256 tokenId, address buyer) public view returns (bool binding) {
-        BidInfo memory bidInfo = bidList[tokenId][buyer];
+        BidInfo memory bidInfo = getBid[tokenId][buyer];
         binding = (block.timestamp - bidInfo.timestamp) <= bidInfo.duration && 
         IERC20(bidInfo.bidERC20).allowance(bidInfo.buyer, address(this)) >= bidInfo.bidPrice && 
         IERC20(bidInfo.bidERC20).balanceOf(bidInfo.buyer) >= bidInfo.bidPrice ? true : false;
@@ -104,7 +87,7 @@ contract Market is IMarket{
     function sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration) external {
         require(IERC721(nft).isApprovedForAll(msg.sender, address(this)) == true, "Market: not approved");
         require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner"); //ownerOf() require tokenId exists
-        askList[tokenId] = AskInfo({
+        getAsk[tokenId] = AskInfo({
             tokenId: tokenId,
             seller: msg.sender,
             askPrice: askPrice,
@@ -116,16 +99,16 @@ contract Market is IMarket{
 
     function sellerRescindAsk(uint256 tokenId) external {
         require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner"); 
-        delete askList[tokenId]; 
+        delete getAsk[tokenId]; 
         emit SellerRescindAsk(tokenId, msg.sender);
     }
 
     function buyerAcceptAsk(uint256 tokenId) external payable{
-        AskInfo memory askInfo = askList[tokenId];
+        AskInfo memory askInfo = getAsk[tokenId];
         require((block.timestamp - askInfo.timestamp) <= askInfo.duration, "Market: no ask or ask has expired"); //this implicitly requires there is an ask
         require(IERC721(nft).ownerOf(tokenId) == askInfo.seller, "Market: owner has changed"); 
         require(msg.value == askInfo.askPrice, "Market: payment not enough");
-        delete askList[tokenId];
+        delete getAsk[tokenId];
         (bool sent, ) = askInfo.seller.call{value: msg.value}("");
         require(sent, "Market: Failed to send Ether");
         IERC721(nft).safeTransferFrom(askInfo.seller, msg.sender, tokenId, "");
@@ -133,13 +116,10 @@ contract Market is IMarket{
     }
 
     function checkAskBinding(uint256 tokenId) public view returns (bool binding) {
-        AskInfo memory askInfo = askList[tokenId];
+        AskInfo memory askInfo = getAsk[tokenId];
         binding = (block.timestamp - askInfo.timestamp) <= askInfo.duration && 
         IERC721(nft).isApprovedForAll(IERC721(nft).ownerOf(tokenId), address(this)) &&
         IERC721(nft).ownerOf(tokenId) == askInfo.seller ? true : false;
     }
-
-    function getAskList() public view { }
-
 
 }

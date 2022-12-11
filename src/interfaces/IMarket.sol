@@ -1,6 +1,28 @@
 pragma solidity ^0.8.13;
 
 interface  IMarket {
+
+    struct AskInfo {
+        uint256 tokenId;
+        address seller;
+        uint64 askPrice;
+        uint256 timestamp;
+        uint32 duration;
+    }
+
+    struct BidInfo {
+        uint256 tokenId;
+        address buyer;
+        uint64 bidPrice;
+        address bidERC20;
+        uint256 timestamp;
+        uint32 duration;
+    }
+
+    function getAsk(uint256 tokenId) external view returns (uint256, address, uint64, uint256, uint32);
+    function getBid(uint256 tokenId, address bidder) external view returns (uint256, address, uint64, address, uint256, uint32);
+    function getBidders(uint256 tokenId) external view returns(address[] memory);
+
     event BuyerBid(uint256 indexed tokenId, address buyer, uint64 bidPrice, address bidERC20, uint256 timestamp, uint32 duration);
     event BuyerRescindBid(uint256 indexed tokenId, address buyer);
     event SellerAcceptBid(uint256 indexed tokenId, address buyer, address seller, uint64 bidPrice, address bidERC20);
@@ -9,7 +31,6 @@ interface  IMarket {
     function buyerRescindBid(uint256 _tokenId) external;
     function sellerAcceptBid(uint256 tokenId, address buyer) external;
     function checkBidBinding(uint256 tokenId, address buyer) external view returns (bool binding);
-    function getBidders(uint256 tokenId) external view returns(address[] memory);
 
 
     event SellerAsk(uint256 indexed tokenId, address seller, uint64 askPrice, uint256 timestamp, uint32 duration);
