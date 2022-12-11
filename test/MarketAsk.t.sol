@@ -3,21 +3,21 @@ pragma solidity ^0.8.10;
 import "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
 import 'src/NFT2.sol';
-import 'src/NFTMarketplace.sol';
-import 'src/NFTMarketplaceFactory.sol';
+import 'src/Market.sol';
+import 'src/MarketFactory.sol';
 
-contract NFTMarketplaceAskTest is Test {
+contract MarketAskTest is Test {
     NFT2 nft;
-    NFTMarketplace marketplace;
-    NFTMarketplaceFactory factory;
+    Market market;
+    MarketFactory factory;
 
     address internal alice;
     address internal bob;
 
     function setUp() public {
         nft = new NFT2("a", "b");
-        factory = new NFTMarketplaceFactory();
-        marketplace = NFTMarketplace(factory.createMarketplace(address(nft)));
+        factory = new MarketFactory();
+        market = Market(factory.createMarket(address(nft)));
 
         alice = address(1); //always the owner
         bob = address(2); //
@@ -27,10 +27,10 @@ contract NFTMarketplaceAskTest is Test {
     }
 
     /** 
-     * ------------- TEST MARKETPLACE FACTORY -------------
+     * ------------- TEST Market FACTORY -------------
     */
     function testFactoryInfex() public {
-        assertEq(factory.getMarketplace(address(nft)), address(marketplace));
+        assertEq(factory.getMarket(address(nft)), address(market));
     }
 
     /** 
@@ -41,20 +41,20 @@ contract NFTMarketplaceAskTest is Test {
         uint256 tokenId = 1;
         aliceSetApproval();
         aliceAsk();
-        (, address seller, , ,) = marketplace.askList(tokenId); 
+        (, address seller, , ,) = market.askList(tokenId); 
         assertEq(seller, alice);
         vm.stopPrank();
     }
 
     function aliceSetApproval() public {
         vm.prank(alice);
-        nft.setApprovalForAll(address(marketplace), true);
+        nft.setApprovalForAll(address(market), true);
     }
 
     function aliceAsk() public {
         uint256 tokenId = 1;
         vm.prank(alice);
-        marketplace.sellerAsk(tokenId, uint64(1000), uint32(1000));
+        market.sellerAsk(tokenId, uint64(1000), uint32(1000));
     }
 
     function testNotOwner() public { // not owner cannot ask for the nft
@@ -69,15 +69,15 @@ contract NFTMarketplaceAskTest is Test {
     function testNonExistentToken() public { //non-existent token cannot be asked
         vm.prank(alice);
         vm.expectRevert(bytes("not approved")); // not "ERC721: invalid token ID" because approval is check first
-        marketplace.sellerAsk(uint256(2), uint64(1000), uint32(1000));
+        market.sellerAsk(uint256(2), uint64(1000), uint32(1000));
     }
 
     function testAliceRescindAsk() public { // owner can Rescind ask
         uint256 tokenId = 1;
         testAliceAskSuccess();
         vm.prank(alice);
-        marketplace.sellerRescindAsk((tokenId));
-        (, address seller, , ,) = marketplace.askList(tokenId); 
+        market.sellerRescindAsk((tokenId));
+        (, address seller, , ,) = market.askList(tokenId); 
         assertEq(seller, address(0));
     }
 
@@ -87,7 +87,7 @@ contract NFTMarketplaceAskTest is Test {
         aliceAsk();
         vm.prank(bob); 
         vm.expectRevert(bytes("not owner"));
-        marketplace.sellerRescindAsk(tokenId);
+        market.sellerRescindAsk(tokenId);
     }
 
     /** 
@@ -100,18 +100,18 @@ contract NFTMarketplaceAskTest is Test {
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
         vm.expectRevert(bytes("payment not enough"));
-        marketplace.buyerAcceptAsk{value: 100}(tokenId);
+        market.buyerAcceptAsk{value: 100}(tokenId);
     }
 
     function testNoAskNoAccept() public { // buyer cannot accept when there is no ask
         uint256 tokenId = 1;
-        (, address seller, , ,) = marketplace.askList(tokenId); 
+        (, address seller, , ,) = market.askList(tokenId); 
         assertEq(seller, address(0));
-        assertEq(marketplace.checkAskBinding(tokenId), false);
+        assertEq(market.checkAskBinding(tokenId), false);
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
         vm.expectRevert(bytes('no ask or ask has expired'));
-        marketplace.buyerAcceptAsk{value: 1000}(tokenId);  
+        market.buyerAcceptAsk{value: 1000}(tokenId);  
     }
 
     function testDurationPass() public { // buyer cannot accept when duration passes
@@ -120,15 +120,15 @@ contract NFTMarketplaceAskTest is Test {
         vm.deal(bob, uint256(1000));
         uint256 timestamp = block.timestamp;
         vm.warp(timestamp + 2000);
-        assertEq(marketplace.checkAskBinding(tokenId), false);
+        assertEq(market.checkAskBinding(tokenId), false);
         vm.prank(bob);
         vm.expectRevert(bytes('no ask or ask has expired'));
-        marketplace.buyerAcceptAsk{value: 1000}(tokenId);
+        market.buyerAcceptAsk{value: 1000}(tokenId);
     }
 
     function testOwnerTransferred() public { 
         // avoid the situation where owner A sets a low price“ask” and transfer/sell 
-        // on other marketplace to B who approves our marketplace as the operator. 
+        // on other Market to B who approves our Market as the operator. 
         // Before B changes the “ask”, anyone can accept A’s previous “ask” and “purchase”
         //  B’s NFT
         uint256 tokenId = 1;
@@ -138,16 +138,16 @@ contract NFTMarketplaceAskTest is Test {
         nft.transferFrom(alice, bob, tokenId);
         assertEq(nft.ownerOf(tokenId), bob);
         // bob, now the new owner, is not obligated to previous ask offered by previous owner
-        assertEq(marketplace.checkAskBinding(tokenId), false);
+        assertEq(market.checkAskBinding(tokenId), false);
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
         // let bob setApproval
-        nft.setApprovalForAll(address(marketplace), true);
+        nft.setApprovalForAll(address(market), true);
         // alice tries to accept ask
         vm.prank(alice);
         vm.expectRevert(bytes("owner has changed"));
-        marketplace.buyerAcceptAsk(tokenId);
-        assertEq(marketplace.checkAskBinding(tokenId), false);
+        market.buyerAcceptAsk(tokenId);
+        assertEq(market.checkAskBinding(tokenId), false);
         // new owner is able to submit new ask 
         // ...
     }
@@ -155,10 +155,10 @@ contract NFTMarketplaceAskTest is Test {
     function testBobAcceptSuccess() public { // checkAskBinding() returns true
         uint256 tokenId = 1;
         testAliceAskSuccess();
-        assertEq(marketplace.checkAskBinding(tokenId), true);
+        assertEq(market.checkAskBinding(tokenId), true);
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
-        marketplace.buyerAcceptAsk{value: 1000}(tokenId);
+        market.buyerAcceptAsk{value: 1000}(tokenId);
         assertEq(nft.ownerOf(tokenId), bob);
     }
 

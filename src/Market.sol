@@ -2,9 +2,9 @@ pragma solidity ^0.8.13;
 
 import "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "./interfaces/INFTMarketplace.sol";
+import "./interfaces/IMarket.sol";
 
-contract NFTMarketplace is INFTMarketplace{
+contract Market is IMarket{
     
     address factory;
     address nft;

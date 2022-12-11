@@ -1,6 +1,6 @@
 pragma solidity ^0.8.13;
 
-interface  INFTMarketplace {
+interface  IMarket {
     event BuyerBid(uint256 indexed tokenId, address buyer, uint64 bidPrice, address bidERC20, uint256 timestamp, uint32 duration);
     event BuyerRescindBid(uint256 indexed tokenId, address buyer);
     event SellerAcceptBid(uint256 indexed tokenId, address buyer, address seller, uint64 bidPrice, address bidERC20);
