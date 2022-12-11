@@ -35,53 +35,54 @@ The Marketplace consists of two independent components: 1) bid mechanism, 2) ask
 ### Bid-and-Accept
 Payment of ERC20 <--> ERC721
 
-1) Buyer offers bid: ```buyerBid(uint256 tokenId, uint64 bidPrice, address bidERC20, uint32 duration)```
-Anyonce can offer a bid for an NFT token as long as he specifies tokenId, bid price, ERC20 token he'd like to use as payment, and the duration for the offer to be valid. Please be noted that buyer needs to authorize the Marketplace as the operator of the ERC20 token beforehand.
+1) ```buyerBid(uint256 tokenId, uint64 bidPrice, address bidERC20, uint32 duration)```
+Anyonce wanting to buy an NFT can offer a bid as long as he specifies tokenId, bid price, ERC20 token he'd like to use as payment, and the duration for the offer to be valid. Please be noted that buyer needs to authorize the Marketplace as the operator of the ERC20 token beforehand.
 
-2) Buyer rescind previously offered bid: ```buyerRescindBid(uint256 tokenId)```
+2) ```buyerRescindBid(uint256 tokenId)```
 Anyone can rescind his previouly offered bid for a tokenId.
 
-3) Seller accepts bid: ```sellerAcceptBid(uint256 tokenId, address buyer)```
-The owner of the NFT tokenId can accept any bid make to his NFT. Please be noted that seller needs to authorize the Marketplace as the operator of the ERC721 token beforehand.
+3) ```sellerAcceptBid(uint256 tokenId, address buyer)```
+The owner of the NFT tokenId can accept any bid make to his NFT so as to complete the sale of his NFT. Please be noted that seller needs to authorize the Marketplace as the operator of the ERC721 token beforehand.
 
-4) check whether bid is binding: ```checkBidBinding(uint256 tokenId, address buyer)```
+4) ```checkBidBinding(uint256 tokenId, address buyer)```
 Anyone can check whether a bid is currently binding on the buyer. This on-chain view method provides composibiliy for later on-chain adoption.
 
 
-| Transaction | Gas |   
-| :---: | :---: | 
-| ERC20 approve() | 24646 | 
-| ERC721 setApprovalForAll() | 24672 | 
-| buyerBid() | 157585 (first bid) | 
-| buyerRescindBid | 2741 |
-| sellerAcceptBid() | 60462 | 
+| Transaction | Gas Usage| Transaction Fee (assuming 12.7Gwei gas price) |    
+| :---: | :---: | :---: | 
+| ERC20 approve() | 24646 | 0.000314 ETH |
+| ERC721 setApprovalForAll() | 24672 | 0.000314 ETH |
+| buyerBid() (first bid) | 157585 | 0.002 ETH |
+| buyerBid() (subsequent bid) | 3512 | 0.0000447 ETH |
+| buyerRescindBid | 2741 | 0.0000349 ETH |
+| sellerAcceptBid() | 60462 | 0.000771 ETH
 
-
+The overal transaction cost for a seller to sell an NFT is 0.000771 ETH.
 
 ### Ask-and-Accept
 Payment of ETH <--> ERC721
 
-1) Seller offers ask: ```sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration)```
-The owner of the NFT tokenId can offer an ask for the NFT. Please be noted that seller needs to authorize the Marketplace as the operator of the ERC721 token beforehand.
+1) ```sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration)```
+The owner of the NFT tokenId wanting to sell it can offer an ask. Please be noted that seller needs to authorize the Marketplace as the operator of the ERC721 token beforehand.
 
-2) Seller rescind previously offered ask: ```sellerRescindAsk(uint256 tokenId)```
+2) ```sellerRescindAsk(uint256 tokenId)```
 Seller can rescind the previously offered ask as long as he is still the owner of the NFT token.
 
-3) Buyer accepts ask: ```buyerAcceptAsk(uint256 tokenId)```
-Anyone can accept seller's offered ask as long as he is paying the amount of ETH required by seller. 
+3) ```buyerAcceptAsk(uint256 tokenId)```
+Anyone wanting to buy the NFT can accept seller's offered ask as long as he is paying the amount of ETH required by seller. 
 
-4) check whether ask is binding ```function checkAskBinding(uint256 tokenId)```
+4) ```function checkAskBinding(uint256 tokenId)```
 Anyone can check whether an ask is currently binding on the seller. This on-chain view method provides composibiliy for later on-chain adoption.
 
 
-| Transaction | Gas |   
-| :---: | :---: | 
-| ERC721 setApprovalForAll() | 24672 | 
-| sellerAsk() | 95820 | 
-| sellerRescindAsk() | 3368 | 
-| buyerAcceptAsk() | 60454 | 
+| Transaction | Gas Usage | Transaction Fee (assuming 12.7Gwei gas price) |  
+| :---: | :---: | :---: | 
+| ERC721 setApprovalForAll() | 24672 | 0.000314 ETH |
+| sellerAsk() | 95820 | 0.00122 ETH | 
+| sellerRescindAsk() | 3368 | 0.0000429 ETH |
+| buyerAcceptAsk() | 60454 | 0.000770 ETH |
 
-
+The overal transaction cost for a buyer to purchase an NFT is 0.000770 ETH.
 
 ### Creator Fee
 Any NFT contract adopting the ERC721 and Ownable standards could set up creator fee and recipient address for its project owner. If the owner wants to split up fees among multiple contributors, he can deploy a fee-sharing multi-sig contract and submit this contract address as the recipient address. In the future, we could refer some of these peripheral contract templates into front-end for better ux. 
