@@ -25,6 +25,5 @@ contract MarketFactory is IMarketFactory {
         getMarket[_nft] = market;
         allMarkets.push(market);
         emit MarketCreated(_nft, market, allMarkets.length);
-
     }
 }

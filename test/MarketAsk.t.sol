@@ -100,7 +100,7 @@ contract MarketAskTest is Test {
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
         vm.expectRevert(bytes("Market: payment not enough"));
-        market.buyerAcceptAsk{value: 100}(tokenId);
+        market.buyerAcceptAsk{value: 100}(tokenId, bob);
     }
 
     function testNoAskNoAccept() public { // buyer cannot accept when there is no ask
@@ -111,7 +111,7 @@ contract MarketAskTest is Test {
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
         vm.expectRevert(bytes('Market: no ask or ask has expired'));
-        market.buyerAcceptAsk{value: 1000}(tokenId);  
+        market.buyerAcceptAsk{value: 1000}(tokenId, bob);  
     }
 
     function testDurationPass() public { // buyer cannot accept when duration passes
@@ -123,7 +123,7 @@ contract MarketAskTest is Test {
         assertEq(market.checkAskBinding(tokenId), false);
         vm.prank(bob);
         vm.expectRevert(bytes('Market: no ask or ask has expired'));
-        market.buyerAcceptAsk{value: 1000}(tokenId);
+        market.buyerAcceptAsk{value: 1000}(tokenId, bob);
     }
 
     function testOwnerTransferred() public { 
@@ -146,7 +146,7 @@ contract MarketAskTest is Test {
         // alice tries to accept ask
         vm.prank(alice);
         vm.expectRevert(bytes("Market: owner has changed"));
-        market.buyerAcceptAsk(tokenId);
+        market.buyerAcceptAsk(tokenId, bob);
         assertEq(market.checkAskBinding(tokenId), false);
         // new owner is able to submit new ask 
         // ...
@@ -158,7 +158,7 @@ contract MarketAskTest is Test {
         assertEq(market.checkAskBinding(tokenId), true);
         vm.deal(bob, uint256(1000));
         vm.prank(bob);
-        market.buyerAcceptAsk{value: 1000}(tokenId);
+        market.buyerAcceptAsk{value: 1000}(tokenId, bob);
         assertEq(nft.ownerOf(tokenId), bob);
     }
 

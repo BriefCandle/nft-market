@@ -103,7 +103,7 @@ contract Market is IMarket{
         emit SellerRescindAsk(tokenId, msg.sender);
     }
 
-    function buyerAcceptAsk(uint256 tokenId) external payable{
+    function buyerAcceptAsk(uint256 tokenId, address to) external payable{
         AskInfo memory askInfo = getAsk[tokenId];
         require((block.timestamp - askInfo.timestamp) <= askInfo.duration, "Market: no ask or ask has expired"); //this implicitly requires there is an ask
         require(IERC721(nft).ownerOf(tokenId) == askInfo.seller, "Market: owner has changed"); 
@@ -111,8 +111,8 @@ contract Market is IMarket{
         delete getAsk[tokenId];
         (bool sent, ) = askInfo.seller.call{value: msg.value}("");
         require(sent, "Market: Failed to send Ether");
-        IERC721(nft).safeTransferFrom(askInfo.seller, msg.sender, tokenId, "");
-        emit BuyerAcceptAsk(tokenId, askInfo.seller, msg.sender, askInfo.askPrice);
+        IERC721(nft).safeTransferFrom(askInfo.seller, to, tokenId, "");
+        emit BuyerAcceptAsk(tokenId, askInfo.seller, to, askInfo.askPrice);
     }
 
     function checkAskBinding(uint256 tokenId) public view returns (bool binding) {

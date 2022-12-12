@@ -39,7 +39,7 @@ interface  IMarket {
 
     function sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration) external;
     function sellerRescindAsk(uint256 tokenId) external;
-    function buyerAcceptAsk(uint256 tokenId) external payable;
+    function buyerAcceptAsk(uint256 tokenId, address to) external payable;
     function checkAskBinding(uint256 tokenId) external view returns (bool binding);
 
 
