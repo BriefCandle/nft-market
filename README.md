@@ -88,8 +88,7 @@ The overal transaction cost for a buyer to purchase an NFT is 0.000770 ETH.
 Any NFT contract adopting the ERC721 and Ownable standards could set up creator fee and recipient address for its project owner. If the owner wants to split up fees among multiple contributors, he can deploy a fee-sharing multi-sig contract and submit this contract address as the recipient address. In the future, we could refer some of these peripheral contract templates into front-end for better ux. 
 
 
-## Strategy
+## MarketTool.sol: Tools
 Buying and selling methods can be built on top of the core bid/ask mechanisms
-### Seller accept the highest bid
 
-### Buyer accept the lowest offer from an NFT collection
+## MarketExtension.sol: Strategies
