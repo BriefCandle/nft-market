@@ -85,13 +85,16 @@ Anyone can check whether an ask is currently binding on the seller. This on-chai
 The overal transaction cost for a buyer to purchase an NFT is 0.000770 ETH.
 
 ### Creator Fee
+(to be added)
 Any NFT contract adopting the ERC721 and Ownable standards could set up creator fee and recipient address for its project owner. If the owner wants to split up fees among multiple contributors, he can deploy a fee-sharing multi-sig contract and submit this contract address as the recipient address. In the future, we could refer some of these peripheral contract templates into front-end for better ux. 
 
 
 ## MarketTool.sol: Tools
+(not completed)
 The offer-and-acceptance mechanism is conceptually clear and implementation straightforward.
 
 There are two pieces of information traders need to know before interacting with the market contracts: 1) NFT project address and 2) NFT tokenIds they would like to trade. For example, if they want to sweep the floor, they need to know which tokenIds have the lowest ask price. Front-end tools can be developed to help them locate the tokens considering on-chain looping would be too expensive. I made a batchOrder function
 
 ## MarketExtension.sol: Strategies
+(not completed)
 However, some strategies are not tokenId-based trades. For example, some buyers may bid for any tokenId for an NFT project as long as it trades below 1 ETH. It would become unreasonable to submit on-chain bids for all the ex., 9999 tokenIds. I use MarketExtension.sol to address this kind of offer-and-acceptance mechanism.
