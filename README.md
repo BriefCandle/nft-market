@@ -33,7 +33,7 @@ Anyone might call the createMarket() function to create a market for an NFT proj
 The Market consists of two independent components: 1) bid mechanism, 2) ask mechanism
 
 ### Bid-and-Accept
-Payment of ERC20 <--> ERC721
+Payment of ANY ERC20 <--> ERC721
 
 1) ```buyerBid(uint256 tokenId, uint64 bidPrice, address bidERC20, uint32 duration)```
 Anyonce wanting to buy an NFT can offer a bid as long as he specifies tokenId, bid price, ERC20 token he'd like to use as payment, and the duration for the offer to be valid. Please be noted that buyer needs to authorize the Market as the operator of the ERC20 token beforehand.
