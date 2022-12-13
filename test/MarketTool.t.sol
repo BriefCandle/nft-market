@@ -35,7 +35,7 @@ contract MarketToolTest is Test {
         vm.stopPrank();
     }
 
-    function testBatchPurchase() payable public {
+    function testBatchPurchaseSuccess() payable public {
         mintApproveAndAsk(alice, 3);
         uint256[] memory tokenIds = new uint256[](3);
         tokenIds[0] = 1;

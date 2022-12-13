@@ -11,6 +11,10 @@ contract MarketTool {
        factory = _factory;
     }
 
+
+    // buyer purchases a batch of sellers' asks
+    // buyer needs to first use an api, ex., alchemy, to get all the desired tokenIds
+    // otherwise, it is too expensive to query it on-chain
     function batchPurchase(address _nft, uint256[] calldata batchOrders) payable external {
         address market = IMarketFactory(factory).getMarket(_nft);
         for (uint i = 0; i < batchOrders.length; i++) {
