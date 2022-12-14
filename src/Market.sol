@@ -4,12 +4,17 @@ import "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IMarket.sol";
 
+import {console} from "forge-std/console.sol";
+
 contract Market is IMarket{
     
-    address factory;
-    address nft;
-    // address owner;
-    // address feeRecipient;
+    address public factory;
+    address public nft;
+
+    // creator fee setup
+    address public nft_creator;
+    address public fee_recipient;
+    uint64 public fee_percent;
 
     mapping(uint256 => AskInfo) public getAsk;
     mapping(uint256 => mapping(address => BidInfo)) public getBid;
@@ -22,6 +27,18 @@ contract Market is IMarket{
     function initialize(address _nft) external {
         require(msg.sender == factory);
         nft = _nft;
+    }
+
+    function setCreatorFee(address _fee_recipient, uint64 _percent) public {
+        (bool success, bytes memory returnData) = nft.staticcall(
+            abi.encodeWithSelector(bytes4(keccak256("owner()")))
+        );
+        require(success, "Market: no creator setup");
+        address _owner = abi.decode(returnData, (address));
+        require(msg.sender == _owner, "Market: not creator");
+        nft_creator = _owner;
+        fee_recipient = _fee_recipient;
+        fee_percent = _percent;
     }
 
     /** ------- BID MECHANISM ------- */
