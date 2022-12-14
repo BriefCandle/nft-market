@@ -41,7 +41,7 @@ contract MarketAskTest is Test {
         uint256 tokenId = 1;
         aliceSetApproval();
         aliceAsk();
-        (, address seller, , ,) = market.getAsk(tokenId); 
+        (, address seller, , , ,) = market.getAsk(tokenId); 
         assertEq(seller, alice);
         vm.stopPrank();
     }
@@ -54,7 +54,7 @@ contract MarketAskTest is Test {
     function aliceAsk() public {
         uint256 tokenId = 1;
         vm.prank(alice);
-        market.sellerAsk(tokenId, uint64(1000), uint32(1000));
+        market.sellerAsk(tokenId, uint256(1000), address(0), uint32(1000));
     }
 
     function testNotOwner() public { // not owner cannot ask for the nft
@@ -69,7 +69,7 @@ contract MarketAskTest is Test {
     function testNonExistentToken() public { //non-existent token cannot be asked
         vm.prank(alice);
         vm.expectRevert(bytes("Market: not approved")); // not "ERC721: invalid token ID" because approval is check first
-        market.sellerAsk(uint256(2), uint64(1000), uint32(1000));
+        market.sellerAsk(uint256(2), uint256(1000), address(0),uint32(1000));
     }
 
     function testAliceRescindAsk() public { // owner can Rescind ask
@@ -77,7 +77,7 @@ contract MarketAskTest is Test {
         testAliceAskSuccess();
         vm.prank(alice);
         market.sellerRescindAsk((tokenId));
-        (, address seller, , ,) = market.getAsk(tokenId); 
+        (, address seller, , , ,) = market.getAsk(tokenId); 
         assertEq(seller, address(0));
     }
 
@@ -105,7 +105,7 @@ contract MarketAskTest is Test {
 
     function testNoAskNoAccept() public { // buyer cannot accept when there is no ask
         uint256 tokenId = 1;
-        (, address seller, , ,) = market.getAsk(tokenId); 
+        (, address seller, , , ,) = market.getAsk(tokenId); 
         assertEq(seller, address(0));
         assertEq(market.checkAskBinding(tokenId), false);
         vm.deal(bob, uint256(1000));

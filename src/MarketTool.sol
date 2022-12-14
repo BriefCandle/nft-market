@@ -20,7 +20,7 @@ contract MarketTool {
         for (uint i = 0; i < batchOrders.length; i++) {
             uint256 tokenId = batchOrders[i];
             if (IMarket(market).checkAskBinding(tokenId) == true) {
-                (, , uint64 askPrice, , ) = IMarket(market).getAsk(tokenId);
+                (, , uint256 askPrice, , , ) = IMarket(market).getAsk(tokenId);
                 IMarket(market).buyerAcceptAsk{value: askPrice}(tokenId, msg.sender);
             }
         }

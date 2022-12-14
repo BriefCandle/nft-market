@@ -6,15 +6,15 @@ import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 // probably need to store them into MarketFactory to create unique MarketExtension for each NFT market
 contract MarketExtension {
 
-    event BuyerFloorBid(address bidder, uint64 bidPrice, address bidERC20, uint256 timestamp, uint32 duration);
-    event SellerAcceptFloorBid(uint256 tokenId, address bidder, address seller, uint64 bitPrice, address bidERC20);
+    event BuyerFloorBid(address bidder, uint256 bidPrice, address bidERC20, uint256 timestamp, uint32 duration);
+    event SellerAcceptFloorBid(uint256 tokenId, address bidder, address seller, uint256 bitPrice, address bidERC20);
 
     address nft;
     address market;
 
     struct FloorBidInfo {
         address bidder;
-        uint64 bidPrice;
+        uint256 bidPrice;
         address bidERC20;
         uint256 timestamp;
         uint32 duration;
@@ -29,7 +29,7 @@ contract MarketExtension {
     }
 
     // before calling this function, buyer must call ERC20.approve()
-    function buyerFloorBid(uint64 bidPrice, address bidERC20, uint32 duration) external {
+    function buyerFloorBid(uint256 bidPrice, address bidERC20, uint32 duration) external {
         require(IERC20(bidERC20).allowance(msg.sender, address(this)) >= bidPrice, "Market: not approved");
         if (getFloorBid[msg.sender].bidder == address(0)) floorBidderList.push(msg.sender);
         getFloorBid[msg.sender] = FloorBidInfo({
@@ -64,7 +64,7 @@ contract MarketExtension {
         revert("Market: no bid");
     }
 
-    
+
     function buyerRescindFloorBid() external {}
 
 }

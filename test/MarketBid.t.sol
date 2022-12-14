@@ -38,10 +38,10 @@ contract MarketAskTest is Test {
      * ------------- TEST BUYER BID -------------
     */
     function testBobBidSuccess() public {
-        uint64 bidPrice = 1000;
+        uint256 bidPrice = 1000;
         buyerApproveERC20(bob, address(market), bidPrice);
         buyerBid(bob, bidPrice);
-        (, ,uint64 price , , , ) = market.getBid(tokenId, bob); 
+        (, ,uint256 price , , , ) = market.getBid(tokenId, bob); 
         assertEq(price, bidPrice);
     }
 
@@ -49,10 +49,10 @@ contract MarketAskTest is Test {
         address[] memory bidders = market.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), false);
         // bid first time 
-        uint64 bidPrice = 1000;
+        uint256 bidPrice = 1000;
         buyerApproveERC20(bob, address(market), bidPrice);
         buyerBid(bob, bidPrice);
-        (, ,uint64 price , , , ) = market.getBid(tokenId, bob); 
+        (, ,uint256 price , , , ) = market.getBid(tokenId, bob); 
         assertEq(price, bidPrice);
         bidders = market.getBidders(tokenId);
         assertEq(getBidderFromArray(bob, bidders), true);
@@ -88,7 +88,7 @@ contract MarketAskTest is Test {
     function testBidderRescindBidAmongMany() public {
         testBobBidSuccess();
         // bid many
-        uint64 bidPrice = 1000;
+        uint256 bidPrice = 1000;
         for (uint i=0; i<20; i++) {
             address bidder = address(uint160(i+10));
             buyerApproveERC20(bidder, address(market), bidPrice);
@@ -131,7 +131,7 @@ contract MarketAskTest is Test {
         require(erc20.approve(spender, amount));
     }
 
-    function buyerBid(address buyer, uint64 price) public {
+    function buyerBid(address buyer, uint256 price) public {
         vm.prank(buyer);
         market.buyerBid(tokenId, price, address(erc20), uint32(1000));
     }
@@ -185,7 +185,7 @@ contract MarketAskTest is Test {
         testBobBidSuccess();
         testBidderRescindBid();
         // charlie bids
-        uint64 bidPrice = 2000;
+        uint256 bidPrice = 2000;
         erc20.mint(charlie, uint256(2000));
         buyerApproveERC20(charlie, address(market), bidPrice);
         buyerBid(charlie, bidPrice);

@@ -30,7 +30,7 @@ contract MarketToolTest is Test {
         nft.setApprovalForAll(address(market), true);
         for (uint i; i < amount; i++) {
             nft.mintTo(recipient);
-            market.sellerAsk(i+1, 1000, 1000);
+            market.sellerAsk(i+1, 1000, address(0), 1000);
         }
         vm.stopPrank();
     }
