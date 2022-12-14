@@ -46,10 +46,10 @@ contract Market is IMarket{
         emit BuyerRescindBid(tokenId, msg.sender);
     }
 
-    function _removeBidderFromArray(uint256 tokenId, address buyer) private {
+    function _removeBidderFromArray(uint256 tokenId, address _bidder) private {
         address[] storage bidders = bidderList[tokenId];
         for (uint i = 0; i < bidders.length; i++) {
-            if (bidders[i] == buyer) {
+            if (bidders[i] == _bidder) {
                 bidders[i] = bidders[bidders.length-1];
                 bidders.pop();
                 return;
@@ -59,19 +59,19 @@ contract Market is IMarket{
     }
 
     // before calling this function, seller must call nft.setApprovalForAll()
-    function sellerAcceptBid(uint256 tokenId, address buyer) external {
+    function sellerAcceptBid(uint256 tokenId, address _bidder) external {
         require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner");
-        BidInfo memory bidInfo = getBid[tokenId][buyer];
+        BidInfo memory bidInfo = getBid[tokenId][_bidder];
         require((block.timestamp - bidInfo.timestamp) <= bidInfo.duration, "Market: not bid or bid has expired"); //this implicitly requires there is an bid
-        _removeBidderFromArray(tokenId, buyer);
-        delete getBid[tokenId][buyer];
+        // _removeBidderFromArray(tokenId, buyer);
+        delete getBid[tokenId][_bidder];
         IERC721(nft).safeTransferFrom(msg.sender, bidInfo.buyer, tokenId, "");
         require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, msg.sender, bidInfo.bidPrice), "Market: ERC20 transfer fail");
-        emit SellerAcceptBid(tokenId, buyer, msg.sender, bidInfo.bidPrice, bidInfo.bidERC20);
+        emit SellerAcceptBid(tokenId, _bidder, msg.sender, bidInfo.bidPrice, bidInfo.bidERC20);
     }
 
-    function checkBidBinding(uint256 tokenId, address buyer) public view returns (bool binding) {
-        BidInfo memory bidInfo = getBid[tokenId][buyer];
+    function checkBidBinding(uint256 tokenId, address _bidder) public view returns (bool binding) {
+        BidInfo memory bidInfo = getBid[tokenId][_bidder];
         binding = (block.timestamp - bidInfo.timestamp) <= bidInfo.duration && 
         IERC20(bidInfo.bidERC20).allowance(bidInfo.buyer, address(this)) >= bidInfo.bidPrice && 
         IERC20(bidInfo.bidERC20).balanceOf(bidInfo.buyer) >= bidInfo.bidPrice ? true : false;

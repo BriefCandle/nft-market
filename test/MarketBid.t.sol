@@ -85,6 +85,26 @@ contract MarketAskTest is Test {
         vm.stopPrank();
     }
 
+    function testBidderRescindBidAmongMany() public {
+        testBobBidSuccess();
+        // bid many
+        uint64 bidPrice = 1000;
+        for (uint i=0; i<20; i++) {
+            address bidder = address(uint160(i+10));
+            buyerApproveERC20(bidder, address(market), bidPrice);
+            buyerBid((bidder), bidPrice);
+        }
+        (,address buyer , , , , ) = market.getBid(tokenId, bob); 
+        assertEq(buyer, bob);
+        assertEq(market.getBidders(1).length, 21);
+        // Rescind bid
+        vm.prank(bob);
+        market.buyerRescindBid(tokenId);
+        (, buyer , , , , ) = market.getBid(tokenId, bob); 
+        assertEq(buyer, address(0));
+        assertEq(market.getBidders(1).length, 20);
+    }
+
     function testNotBidderRescindBid() public { // not bidder cannot Rescind bid
         testBobBidSuccess();
         (,address buyer , , , , ) = market.getBid(tokenId, bob); 
