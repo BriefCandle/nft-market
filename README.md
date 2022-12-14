@@ -60,7 +60,7 @@ Anyone can check whether a bid is currently binding on the buyer. This on-chain 
 The overal transaction cost for a seller to sell an NFT is 0.000771 ETH.
 
 ### Ask-and-Accept
-Payment of ETH <--> ERC721
+Payment of ETH or ANY ERC20 <--> ERC721
 
 1) ```sellerAsk(uint256 tokenId, uint64 askPrice, uint32 duration)```
 The owner of the NFT tokenId wanting to sell it can offer an ask. Please be noted that seller needs to authorize the Market as the operator of the ERC721 token beforehand.
@@ -85,10 +85,14 @@ Anyone can check whether an ask is currently binding on the seller. This on-chai
 The overal transaction cost for a buyer to purchase an NFT is 0.000770 ETH.
 
 ### Creator Fee
-(to be added)
+The creator of an NFT project may set up a creator fee and fee recipient as long as the NFT contract inheirts the Ownable standard. If the owner wants to split up fees among multiple contributors, he can deploy a fee-sharing multi-sig contract and submit this contract address as the recipient address. In the future, we could refer some of these peripheral contract templates into front-end for better ux. 
 
-Any NFT contract adopting the ERC721 and Ownable standards could set up creator fee and recipient address for its project owner. If the owner wants to split up fees among multiple contributors, he can deploy a fee-sharing multi-sig contract and submit this contract address as the recipient address. In the future, we could refer some of these peripheral contract templates into front-end for better ux. 
+```setCreatorFee(address _fee_recipient, uint16 _percent) ```
 
+Please be noted that "_percent" has two decimal points. Therefore, 10000 stands for 100.00%; 200 stands for 2.00%
+
+### ERC20
+The proposed protocol has no restriction over which ERC20 can be used as payment method. Therefore, any ERC20 can be offered as payment method as long as the offeror expects the acceptor to accept it.
 
 ## MarketTool.sol: Tools
 (not completed)
