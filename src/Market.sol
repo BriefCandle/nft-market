@@ -12,7 +12,6 @@ contract Market is IMarket{
     address public nft;
 
     // creator fee setup
-    address public nft_creator;
     address public fee_recipient;
     uint64 public fee_percent;
 
@@ -29,6 +28,7 @@ contract Market is IMarket{
         nft = _nft;
     }
 
+    // read nft owner address from nft address if there is an owner() method
     function setCreatorFee(address _fee_recipient, uint64 _percent) public {
         (bool success, bytes memory returnData) = nft.staticcall(
             abi.encodeWithSelector(bytes4(keccak256("owner()")))
@@ -36,7 +36,6 @@ contract Market is IMarket{
         require(success, "Market: no creator setup");
         address _owner = abi.decode(returnData, (address));
         require(msg.sender == _owner, "Market: not creator");
-        nft_creator = _owner;
         fee_recipient = _fee_recipient;
         fee_percent = _percent;
     }
@@ -80,10 +79,12 @@ contract Market is IMarket{
         require(msg.sender == IERC721(nft).ownerOf(tokenId), "Market: not owner");
         BidInfo memory bidInfo = getBid[tokenId][_bidder];
         require((block.timestamp - bidInfo.timestamp) <= bidInfo.duration, "Market: not bid or bid has expired"); //this implicitly requires there is an bid
-        // _removeBidderFromArray(tokenId, buyer);
+        _removeBidderFromArray(tokenId, _bidder);
         delete getBid[tokenId][_bidder];
         IERC721(nft).safeTransferFrom(msg.sender, bidInfo.buyer, tokenId, "");
-        require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, msg.sender, bidInfo.bidPrice), "Market: ERC20 transfer fail");
+        // transfer ERC20 to respective recipient
+        require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, msg.sender, bidInfo.bidPrice*(100-fee_percent)/100), "Market: ERC20 transfer fail");
+        if (fee_recipient != address(0)) require(IERC20(bidInfo.bidERC20).transferFrom(bidInfo.buyer, fee_recipient, bidInfo.bidPrice*fee_percent/100), "Market: ERC20 transfer fail");
         emit SellerAcceptBid(tokenId, _bidder, msg.sender, bidInfo.bidPrice, bidInfo.bidERC20);
     }
 

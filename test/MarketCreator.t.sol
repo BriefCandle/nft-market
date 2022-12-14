@@ -44,10 +44,22 @@ contract MarketCreatorTest is Test {
         // creator is successfully set
         vm.prank(bob);
         market_nft_ownable.setCreatorFee(charlie, 2);
-        assertEq(market_nft_ownable.nft_creator(), bob);
+        assertEq(market_nft_ownable.fee_recipient(), charlie);
         // not creator cannot set creator
         vm.prank(alice);
         vm.expectRevert(bytes("Market: not creator"));
         market_nft_ownable.setCreatorFee(charlie, 2);
+    }
+
+    function testOwnerTransferReset() public {
+        vm.startPrank(bob);
+        nft_ownable.transferOwnership(charlie);
+        vm.expectRevert(bytes("Market: not creator"));
+        market_nft_ownable.setCreatorFee(charlie, 2);
+        vm.stopPrank();
+        vm.prank(charlie);
+        market_nft_ownable.setCreatorFee(bob, 2);
+        assertEq(market_nft_ownable.fee_recipient(), bob);
+
     }
 }
