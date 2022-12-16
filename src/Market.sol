@@ -34,9 +34,9 @@ contract Market is IMarket{
         require(success, "Market: no creator setup");
         address _owner = abi.decode(returnData, (address));
         require(msg.sender == _owner, "Market: not creator");
-        fee_recipient = _fee_recipient;
         require(_percent <= 10000, "Market: fee_percent too high");
         fee_percent = _percent;
+        fee_recipient = _fee_recipient;
     }
 
     /** ------- BID MECHANISM ------- */
@@ -121,7 +121,7 @@ contract Market is IMarket{
             duration: duration
         });
 
-        emit SellerAsk(tokenId, msg.sender, askPrice, block.timestamp, duration);
+        emit SellerAsk(tokenId, msg.sender, askPrice, askERC20, block.timestamp, duration);
     }
 
     function sellerRescindAsk(uint256 tokenId) external {

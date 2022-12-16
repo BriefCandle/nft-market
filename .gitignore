@@ -1,6 +1,8 @@
 broadcast/
 cache/
 out/
+wallet/
+.env
 src/BidAndAsk.sol
 src/example/NFT.sol
 src/EnglishAuction.sol

@@ -6,7 +6,7 @@ import 'src/example/NFTOwnable.sol';
 import 'src/Market.sol';
 import 'src/MarketFactory.sol';
 
-contract ContractScript is Script {
+contract CreateFactoryScript is Script {
 
     NFTOwnable nft;
     Market market;
@@ -19,9 +19,9 @@ contract ContractScript is Script {
         // vm.broadcast(); 
 
         factory = new MarketFactory();
-        nft = new NFTOwnable("a", "b");
-        market = Market(factory.createMarket(address(nft)));
-        erc20 = new ERC20Token("a", "b");
+        // nft = new NFTOwnable("a", "b");
+        // market = Market(factory.createMarket(address(nft)));
+        // erc20 = new ERC20Token("a", "b");
 
         vm.stopBroadcast();
     }

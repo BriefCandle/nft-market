@@ -34,7 +34,7 @@ interface  IMarket {
     function checkBidBinding(uint256 tokenId, address buyer) external view returns (bool binding);
 
 
-    event SellerAsk(uint256 indexed tokenId, address seller, uint256 askPrice, uint256 timestamp, uint32 duration);
+    event SellerAsk(uint256 indexed tokenId, address seller, uint256 askPrice, address askERC20, uint256 timestamp, uint32 duration);
     event SellerRescindAsk(uint256 indexed tokenId, address seller);
     event BuyerAcceptAsk(uint256 indexed tokenId, address seller, address buyer, uint256 askPrice);
 

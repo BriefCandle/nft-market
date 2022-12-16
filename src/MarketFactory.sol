@@ -14,14 +14,14 @@ contract MarketFactory is IMarketFactory {
     }
 
     function createMarket(address _nft) external returns (address market) {
-        require(_nft != address(0), "zero address");
-        require(getMarket[_nft] == address(0), "address exists");
+        require(_nft != address(0), "Factory: zero address");
+        require(getMarket[_nft] == address(0), "Factory: address exists");
         bytes memory bytecode = type(Market).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(_nft));
         assembly {
             market := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        IMarket(market).initialize(_nft); // could get owner if Ownable
+        IMarket(market).initialize(_nft); 
         getMarket[_nft] = market;
         allMarkets.push(market);
         emit MarketCreated(_nft, market, allMarkets.length);
