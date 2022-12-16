@@ -3,4 +3,5 @@ cache/
 out/
 src/BidAndAsk.sol
 src/example/NFT.sol
+src/EnglishAuction.sol
 test/NFTAsk.t.sol
