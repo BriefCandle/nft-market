@@ -24,7 +24,7 @@ Offer is valid when the offeror hasn't revoked his offer && when the offer durat
 Offer is binding when the offerer has not revoke the authorization given to the Market to operate his consideration (i.e., ERC20 for bidder & ERC721 for asker) && when the offerer still possess the required consideration as specified in his offer (i.e., amount of ERC20 for bidder & ownership of ERC721 for asker).
 
 
-# SMART CONTRACT
+# SMART CONTRACT - Market
 
 ## MaketFactory.sol
 Anyone might call the createMarket() function to create a market for an NFT project. The deployment cost is 1389559. 
@@ -105,3 +105,7 @@ There are two pieces of information traders need to know before interacting with
 (not completed)
 
 However, some strategies are not tokenId-based trades. For example, some buyers may bid for any tokenId for an NFT project as long as it trades below 1 ETH. It would become unreasonable to submit on-chain bids for all the ex., 9999 tokenIds. I use MarketExtension.sol to address this kind of offer-and-acceptance mechanism.
+
+# GAME
+(not completed)
+An on-chain game with trading-based gameplay is proposed. 
