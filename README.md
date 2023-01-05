@@ -1,4 +1,4 @@
-#GAME (ongoing)
+# GAME (ongoing)
 To better demonstrate the trading mechanisms as proposed, a crypto-game is developed. It is a 2048-style tile game where trading is part of the game experience. 
 Game repo: https://github.com/BriefCandle/TILES-smart-contract
 Game front-end (Goerli): https://tiles-angular.vercel.app/
