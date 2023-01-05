@@ -1,3 +1,8 @@
+#GAME (ongoing)
+To better demonstrate the trading mechanisms as proposed, a crypto-game is developed. It is a 2048-style tile game where trading is part of the game experience. 
+Game repo: https://github.com/BriefCandle/TILES-smart-contract
+Game front-end (Goerli): https://tiles-angular.vercel.app/
+
 # OVERVIEW
 The Market is based on an offer-and-accept mechanism automating the transfer of considerations of ERC721, ERC20 & ETH between buyers and sellers of NFTs. It follows the uniswap-factory pattern and consists of two componenets: 1) MarketFactory, 2) Market.
 
@@ -105,7 +110,3 @@ There are two pieces of information traders need to know before interacting with
 (not completed)
 
 However, some strategies are not tokenId-based trades. For example, some buyers may bid for any tokenId for an NFT project as long as it trades below 1 ETH. It would become unreasonable to submit on-chain bids for all the ex., 9999 tokenIds. I use MarketExtension.sol to address this kind of offer-and-acceptance mechanism.
-
-# GAME
-(not completed)
-An on-chain game with trading-based gameplay is proposed. 
