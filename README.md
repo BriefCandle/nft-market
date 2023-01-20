@@ -1,9 +1,12 @@
 # GAME (ongoing)
 To better demonstrate the trading mechanisms as proposed, a crypto-game is made for fun. It is a 2048-style tile game where trading is part of the game experience. 
 
-//Game repo: https://github.com/BriefCandle/TILES-smart-contract
+<!---
+Game repo: https://github.com/BriefCandle/TILES-smart-contract
 
-//Game front-end (Goerli): https://tiles-angular.vercel.app/
+Game front-end (Goerli): https://tiles-angular.vercel.app/
+-->
+
 
 # UPCOMING CHANGES (to expand bidding strategies)
 I am contemplating an update on what constitutes an offer. Previously, when submitting an offer (either bid or ask), a user stores three types of information: 1) token info (i.e., tokenId), 2) payment info (erc20 address and price), and 3) contract validity (duration). Now, if I expand token info, I can extending bidding strategies on the market. For example, 
